@@ -1,28 +1,53 @@
-# AutoVerifyCode
-Android的短信验证码自动输入库，内嵌自动申请权限，支持配置
- - 短信验证码长度
- - 验证码类型(大写字母、小写字母、大小写字母、数字、数字字母)
- - 短信内容过滤
- - 发送者号码过滤
- - 短信权限回调，失败重新操作等等
- - 短信信息回调，可自行处理。
+package com.tpnet.autoverifycodesample;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.tpnet.autoverifycode.R;
+import com.tpnet.tpautoverifycode.AutoVerifyCodeConfig;
+import com.tpnet.tpautoverifycode.AutoVerifyCode;
+import com.tpnet.tpautoverifycode.callback.OnInputCompleteListener;
+import com.tpnet.tpautoverifycode.callback.PermissionCallBack;
+import com.tpnet.tpautoverifycode.callback.SmsCallBack;
+
+public class MainActivity extends AppCompatActivity {
+
+  
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+  
+    }
 
 
-# 使用
 
-## 最简单的使用
+    public void open(View v){
+        startActivity(new Intent(this,MainActivity.class));
+        finish();
+    }
 
-适用在验证码为数字，而且验证码为4-6位。
-```
-AutoVerifyCode.getInstance()
+    /**
+     * 简单的4到6位的数字验证码获取,不回调
+     * @param v
+     */
+    public void simple(View v){
+ 
+        AutoVerifyCode.getInstance()
                 .with(MainActivity.this)
                 .into((EditText) findViewById(R.id.et_code))  //要输入的编辑框
                 .start();       //开始
-```
+    }
 
-## 多种属性配置
-```
-/**
+
+    /**
      * 多种属性设置
      * @param v
      */
@@ -40,7 +65,7 @@ AutoVerifyCode.getInstance()
                 .with(MainActivity.this)
                 .config(config)  //验证码选项配置
                 .smsCallback(new MessageCallBack())  //短信内容回调
-                .permissionCallback(new PerCallBack())  //权限申请回调
+                .permissionCallback(new PerCallBack())  //短信短信回调
                 .inputCompleteCallback(new OnInputCompleteListener() {
                     @Override
                     public void onInputComplete(String text) {
@@ -94,19 +119,24 @@ AutoVerifyCode.getInstance()
             //获取短信权限失败
             Toast.makeText(MainActivity.this,"拒绝获取短信权限",Toast.LENGTH_SHORT).show();
             Log.e("@@","获取短信权限失败,返回真则重试获取权限,或者你自己手动获取了之后再返回真也行");
-
+            
+            
             return false;
+            
         }
     }
-```
+    
+    
+    
+    
+    
 
-## 释放
-因为一般只用一次,所以在页面销毁的地方释放内存。
-```
-@Override
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         //因为一般只用一次，所以页面销毁就释放。
         AutoVerifyCode.getInstance().release();
     }
-```
+ 
+    
+}
